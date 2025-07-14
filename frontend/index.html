@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Task Tracker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      margin: 0;
+      padding: 40px 20px;
+    }
+
+    .container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #555;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 20px;
+      border: 1.8px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: border-color 0.3s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #3b82f6;
+      outline: none;
+      box-shadow: 0 0 8px rgba(59,130,246,0.3);
+    }
+
+    button {
+      width: 100%;
+      background-color: #3b82f6;
+      border: none;
+      padding: 12px;
+      font-size: 16px;
+      color: white;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #2563eb;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Smart Task Tracker</h1>
+
+    <label for="task">Task Description</label>
+    <input id="task" type="text" name="task" placeholder="What needs to be done?" />
+
+    <label for="category">Category</label>
+    <input id="category" type="text" name="category" placeholder="e.g. Work, Personal" />
+
+    <label for="date">Due Date</label>
+    <input id="date" type="date" name="dueDate" />
+
+    <label for="priority">Priority</label>
+    <select id="priority" name="priority">
+      <option value="Low">Low</option>
+      <option value="Medium">Medium</option>
+      <option value="High">High</option>
+    </select>
+
+    <button onclick="addTask()">Add Task</button>
+  </div>
+
+  <script>
+    async function addTask() {
+      const taskData = {
+        task: document.getElementById('task').value.trim(),
+        category: document.getElementById('category').value.trim(),
+        dueDate: document.getElementById('date').value,
+        priority: document.getElementById('priority').value
+      };
+
+      if (!taskData.task) {
+        alert('Please enter a task description.');
+        return;
+      }
+
+      try {
+        await fetch("https://634hyvzph7.execute-api.us-east-2.amazonaws.com/prod/add-task", {
+          method: "POST",
+          body: JSON.stringify(taskData),
+          headers: { "Content-Type": "application/json" }
+        });
+
+        alert("Task added!");
+        // Clear form
+        document.getElementById('task').value = '';
+        document.getElementById('category').value = '';
+        document.getElementById('date').value = '';
+        document.getElementById('priority').value = 'Low';
+      } catch (error) {
+        alert("Failed to add task. Please try again.");
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
